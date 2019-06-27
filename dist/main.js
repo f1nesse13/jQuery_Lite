@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("class DOMNodeCollection {\n  constructor(nodes) {\n    this.nodes = nodes;\n  }\n\n  each(cb) {\n    this.nodes.forEach(cb);\n  }\n\n  html(arg) {\n    if (typeof arg === 'string') {\n      this.nodes.each(el => {\n        el.innerHTML = arg;\n      });\n    } else if (this.nodes.length < 0) {\n      return this.nodes[0].innerHTML;\n    }\n  }\n\n  empty() {\n    this.html('');\n  }\n}\n\nmodule.exports = DOMNodeCollection;\n\n\n//# sourceURL=webpack:///./src/dom_node_collection.js?");
+eval("class DOMNodeCollection {\n  constructor(nodes) {\n    this.nodes = nodes;\n  }\n\n  each(cb) {\n    this.nodes.forEach(cb);\n  }\n\n  html(arg) {\n    if (typeof arg === 'string') {\n      this.each(node => {\n        node.innerHTML = arg;\n      });\n    } else if (this.nodes.length > 0) {\n      return this.nodes[0].innerHTML;\n    }\n  }\n\n  empty() {\n    this.html('');\n  }\n\n  append(children) {\n    if (this.nodes.length === 0) {\n      return;\n    }\n\n    if (typeof children === 'object' && !(children instanceof DOMNodeCollection)) {\n      // make sure it is a collection\n      children = $l(children);\n    }\n    if (typeof children === 'string') {\n      // strings gets pushed into the selected element(s)\n      this.each(node => (node.innerHTML += children));\n    } else if (children instanceof DOMNodeCollection) {\n      // if its an array of nodes we will take each node and append each child\n      this.each(node => {\n        children.each(child => {\n          node.appendChild(child);\n        });\n      });\n    }\n  }\n}\n\nmodule.exports = DOMNodeCollection;\n\n\n//# sourceURL=webpack:///./src/dom_node_collection.js?");
 
 /***/ }),
 
@@ -104,7 +104,7 @@ eval("class DOMNodeCollection {\n  constructor(nodes) {\n    this.nodes = nodes;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const DOMNodeCollection = __webpack_require__(/*! ./dom_node_collection.js */ \"./src/dom_node_collection.js\");\n\nwindow.$l = arg => {\n  if (arg instanceof HTMLElement) {\n    return DOMNodeCollection([arg]);\n  }\n  if (typeof arg === 'string') {\n    let nodelist = document.querySelectorAll(arg);\n    nodelist = Array.from(nodelist);\n    return DOMNodeCollection(nodelist);\n  }\n};\n\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("const DOMNodeCollection = __webpack_require__(/*! ./dom_node_collection.js */ \"./src/dom_node_collection.js\");\n\nwindow.$l = arg => {\n  if (arg instanceof HTMLElement) {\n    return new DOMNodeCollection([arg]);\n  }\n  if (typeof arg === 'string') {\n    let nodelist = document.querySelectorAll(arg);\n    nodelist = Array.from(nodelist);\n    return new DOMNodeCollection(nodelist);\n  }\n};\n\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ })
 
